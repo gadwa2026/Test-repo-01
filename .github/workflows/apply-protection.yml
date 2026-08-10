@@ -1,0 +1,41 @@
+name: Apply branch protection & create release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+  issues: write
+  pull-requests: write
+  checks: write
+
+jobs:
+  apply-protection:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up jq
+        run: |
+          sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Make script executable
+        run: chmod +x ./.github/scripts/repo-protect-and-release.sh
+
+      - name: Run protection script
+        env:
+          GITHUB_TOKEN: ${{ secrets.PROTECTION_TOKEN }} # Personal Access Token with repo scope
+          OWNER: gadwa2026
+          REPO: Test-repo-01
+          BRANCH: main
+          REQUIRED_APPROVALS: 1
+          ENFORCE_ADMINS: true
+          REQUIRE_LINEAR_HISTORY: false
+          REQUIRE_CONVERSATION_RESOLUTION: false
+          CREATE_RELEASE: true
+          RELEASE_TAG: v0.1.0
+          RELEASE_DRAFT: true
+        run: |
+          ./.github/scripts/repo-protect-and-release.sh
