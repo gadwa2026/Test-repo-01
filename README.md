@@ -1,34 +1,55 @@
-# Test-repo-01
 
-![CI](https://github.com/gadwa2026/Test-repo-01/actions/workflows/ci.yml/badge.svg)
-![License](https://img.shields.io/github/license/gadwa2026/Test-repo-01)
+## Automation scripts
 
-A new open source project by @gadwa2026 — starter repository with templates for README, contributing guidelines, CI, and community files.
+This repository includes helper scripts and a GitHub Actions workflow to apply branch protection and optionally create a release.
 
-## Quick start
+Files added
 
-Clone the repo:
+- .github/scripts/repo-protect-dryrun.sh — Dry-run script that prints the branch protection and release JSON payloads (safe; does not modify the repo).
+- .github/scripts/repo-protect-and-release.sh — Script that applies branch protection and creates a release. Uses the GitHub REST API; requires a Personal Access Token (PAT) with repo scope.
+- .github/workflows/apply-protection.yml — A manual workflow (workflow_dispatch) that runs the non-dry-run script. It expects a repository secret named PROTECTION_TOKEN containing a PAT with repo scope.
 
-```bash
-git clone https://github.com/gadwa2026/Test-repo-01.git
-cd Test-repo-01
-```
+How to run (local)
 
-Create and activate a virtual environment, install dev dependencies, and run tests:
+1) Dry-run (recommended first):
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate  # or .\.venv\Scripts\activate on Windows
-pip install -r requirements-dev.txt
-pytest
+# Optional: export a token to let the script inspect Actions runs
+export GITHUB_TOKEN="ghp_xxx"
+chmod +x .github/scripts/repo-protect-dryrun.sh
+.github/scripts/repo-protect-dryrun.sh
 ```
 
-There is a small example module in `src/hello.py` and a test in `tests/test_hello.py` to demonstrate the project structure and CI.
+2) Apply protection & create release (local)
 
-## Contributing
+```bash
+export GITHUB_TOKEN="ghp_xxx"   # PAT with repo scope
+chmod +x .github/scripts/repo-protect-and-release.sh
+.github/scripts/repo-protect-and-release.sh
+```
 
-See CONTRIBUTING.md for how to file issues and submit pull requests.
+How to run via GitHub Actions (recommended)
 
-## License
+1) Create a repository secret named PROTECTION_TOKEN containing a PAT with repo scope:
+   - Repo → Settings → Secrets and variables → Actions → New repository secret
+   - Name: PROTECTION_TOKEN
+   - Value: ghp_xxx
 
-This project is licensed under the MIT License — see the LICENSE file for details.
+2) Trigger the workflow manually:
+   - Actions → Apply branch protection & create release → Run workflow
+
+Environment variables and customization
+
+- REQUIRED_APPROVALS: number of required approving reviews (default 1)
+- ENFORCE_ADMINS: true/false (default true)
+- REQUIRE_LINEAR_HISTORY: true/false (default false)
+- REQUIRE_CONVERSATION_RESOLUTION: true/false (default false)
+- CREATE_RELEASE: true/false (default true)
+- RELEASE_TAG: the release tag to create (default v0.1.0)
+- RELEASE_DRAFT: true/false (default true)
+
+Notes and security
+
+- Do not paste your PAT into public places or chat. Use repository secrets or run scripts locally.
+- The workflow uses the PROTECTION_TOKEN secret because the Actions-provided GITHUB_TOKEN may not have permission to modify branch protection in some organizations.
+- If you prefer, you can run the scripts locally instead of using the Action.
