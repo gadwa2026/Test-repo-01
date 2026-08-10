@@ -5,6 +5,7 @@ repo_url: https://github.com/gadwa2026/Test-repo-01
 
 nav:
   - Home: index.md
+  - Quickstart: ../README.md
 
 theme:
   name: material
