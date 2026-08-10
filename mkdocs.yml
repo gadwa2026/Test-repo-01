@@ -1,0 +1,15 @@
+site_name: Test-repo-01
+site_description: Documentation for Test-repo-01
+site_author: gadwa2026
+repo_url: https://github.com/gadwa2026/Test-repo-01
+
+nav:
+  - Home: index.md
+
+theme:
+  name: material
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/gadwa2026/Test-repo-01
